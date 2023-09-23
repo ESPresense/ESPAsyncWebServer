@@ -1221,9 +1221,15 @@ void AsyncWebSocket::_cleanBuffers()
 {
   AsyncWebLockGuard l(_lock);
 
-  for(AsyncWebSocketMessageBuffer * c: _buffers){
-    if(c && c->canDelete()){
-        _buffers.remove(c);
+  bool done = false;
+  while (!done) {
+    done = true;
+    for(AsyncWebSocketMessageBuffer * c: _buffers){
+      if(c && c->canDelete()){
+          _buffers.remove(c);
+          done = false;
+          break;
+      }
     }
   }
 }
